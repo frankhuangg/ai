@@ -20,14 +20,14 @@ struct Node
 	Node *parent;
 	Node(int m_num, int c_num, int A_boat_state, int B_boat_state, int bcount, int Bcount, int step_count, Node *ptr) : m{m_num}, c{c_num}, b{A_boat_state}, B{B_boat_state}, b_count{bcount}, B_count{Bcount}, step{step_count}, parent{ptr}
 	{
-		f_loss = (m + c) / 2;
+		f_loss = (m + c + 3*b_count + 25*B_count) / 4;
 	}
 	Node(): m{0}, c{0}, b{0}, B{0}, b_count{0}, B_count{0}, step{0}, f_loss{0}, parent{nullptr} {};
 };
 
 deque<Node> opened_list;
 vector<Node> closed_list;
-int m_num, c_num;
+int m_num=3, c_num=3;
 
 bool is_safe(Node *n)
 { // 判斷兩岸的傳教士是否安全
@@ -46,16 +46,11 @@ bool is_safe(Node *n)
 		return true;
 }
 
-int cal_value(Node *node)
-{
-	return node->m * 100 + node->c * 10 + node->b;
-}
-
 bool in_closed_list(Node *node)
 { // 確認是否已經在closed_list內
 	for (auto x : closed_list)
 	{
-		if (x.m == node->m && x.c == node->c && x.b == node->b)
+		if (x.m == node->m && x.c == node->c && x.b == node->b && x.B ==node->B)
 		{
 			return true;
 		}
@@ -183,10 +178,10 @@ int main(int argc, char const *argv[])
 {
 	SetConsoleOutputCP(CP_UTF8);
 
-	cout << "請輸入初始傳教士人數：";
-	cin >> m_num;
-	cout << "請輸入初始野人人數：";
-	cin >> c_num;
+	// cout << "請輸入初始傳教士人數：";
+	// cin >> m_num;
+	// cout << "請輸入初始野人人數：";
+	// cin >> c_num;
 
 	closed_list.reserve((m_num + 1) * (c_num + 1) * 2 + 1); //解決記憶體位址跳掉的問題
 	Node start_node(m_num, c_num, 1, 1, 0, 0, 0, nullptr);	//初始化
