@@ -63,8 +63,19 @@ bool in_closed_list(Node *node)
 	return false;
 }
 
+void check_openlist()
+{
+	cout<<"openlist:";
+ 	for(deque<Node>::iterator it=opened_list.begin(); it!=opened_list.end();it++){
+  		cout << it->m << " " << it->c << " " << it->b << " " << it->step<<"/";
+ 	}
+ 	cout << endl;
+}
+
 void sort_by_floss()
-{ // 將opened_list內的點按照分數大小排序
+{ 
+	check_openlist();
+	// 將opened_list內的點按照分數大小排序
 	for(auto i=opened_list.begin(); i!=opened_list.end(); i++){
 		for(auto j=i+1; j!=opened_list.end(); j++){
 			if(j->step>=i->f_loss){
@@ -74,14 +85,6 @@ void sort_by_floss()
 				swap(i, j);
 		}
 	}
-}
-
-void swap(Node &a, Node &b)
-{
-	Node tmp;
-	tmp = a;
-	a = b;
-	b = tmp;
 }
 
 void refresh_opened(Node *n)
