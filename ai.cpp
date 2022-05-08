@@ -20,7 +20,7 @@ struct Node
 	Node *parent;
 	Node(int m_num, int c_num, int A_boat_state, int B_boat_state, int bcount, int Bcount, int step_count, Node *ptr) : m{m_num}, c{c_num}, b{A_boat_state}, B{B_boat_state}, b_count{bcount}, B_count{Bcount}, step{step_count}, parent{ptr}
 	{
-		f_loss = (m + c + 3*b_count + 25*B_count) / 4;
+		f_loss = (m + c) / 2;
 	}
 	Node(): m{0}, c{0}, b{0}, B{0}, b_count{0}, B_count{0}, step{0}, f_loss{0}, parent{nullptr} {};
 };
@@ -116,37 +116,121 @@ void a_star_algorithm()
 			for (int j = 0; j <= c_num; j++)
 			{ // j代表上船的食人魔數量
 				// 判斷船上的合理情況
-				if (i + j == 0 || i + j > 2 || (i != 0 && i < j))
+				if (i + j == 0 || i + j > 3 || (i != 0 && i < j))
 				{
 					continue;
 				}
-				if (node.b == 1) // A船在左側，下一狀態船在右側
+				//需要判斷4種情況，每次只能選一艘船，bB:00-> 01/10，01-> 00/11，10-> 00/11，11-> 01/10
+				if (node.b == 1 && node.B == 1) // A船在左側，B船在左側
 				{
 					if (i > node.m || j > node.c)
 					{
 						continue;
 					}
-					Node *child_node = new Node(node.m - i, node.c - j, 0,1,node.b_count+1,node.B_count, node.step + 1, &closed_list.back());
-					if (!in_closed_list(child_node))
+					//走A船
+					if(i + j < 3)
 					{
-						if (is_safe(child_node))
+						Node *childA_node = new Node(node.m - i, node.c - j, 0,1,node.b_count+1,node.B_count, node.step + 1, &closed_list.back());
+						if (!in_closed_list(childA_node))
 						{
-							refresh_opened(child_node);
+							if (is_safe(childA_node))
+							{
+								refresh_opened(childA_node);
+							}
+						}
+					}
+					//走B船
+					Node *childB_node = new Node(node.m - i, node.c - j, 1,0,node.b_count,node.B_count+1, node.step + 1, &closed_list.back());
+					if (!in_closed_list(childB_node))
+					{
+						if (is_safe(childB_node))
+						{
+							refresh_opened(childB_node);
+						}
+					}
+
+				}
+				else if(node.b == 1 && node.B == 0)// A船在左側，B船在右側
+				{ 
+					if (i > m_num - node.m || j > c_num - node.c || i > node.m || j > node.c)
+					{
+						continue;
+					}
+					//走A船
+					if(i + j < 3)
+					{
+						Node *childA_node = new Node(node.m - i, node.c - j, 0,0,node.b_count+1,node.B_count, node.step + 1, &closed_list.back());
+						if (!in_closed_list(childA_node))
+						{
+							if (is_safe(childA_node))
+							{
+								refresh_opened(childA_node);
+							}
+						}
+					}
+					//走B船
+					Node *childB_node = new Node(node.m + i, node.c + j, 1,1,node.b_count,node.B_count+1, node.step + 1, &closed_list.back());
+					if (!in_closed_list(childB_node))
+					{
+						if (is_safe(childB_node))
+						{
+							refresh_opened(childB_node);
 						}
 					}
 				}
-				else
-				{ // 船在右側，下一狀態船在左側
+				else if(node.b == 0 && node.B == 1)// A船在右側，B船在左側
+				{ 
+					if (i > m_num - node.m || j > c_num - node.c || i > node.m || j > node.c)
+					{
+						continue;
+					}
+					//走A船
+					if(i + j < 3)
+					{
+						Node *childA_node = new Node(node.m + i, node.c + j, 1,1,node.b_count+1,node.B_count, node.step + 1, &closed_list.back());
+						if (!in_closed_list(childA_node))
+						{
+							if (is_safe(childA_node))
+							{
+								refresh_opened(childA_node);
+							}
+						}
+					}
+					//走B船
+					Node *childB_node = new Node(node.m - i, node.c - j, 0,0,node.b_count,node.B_count+1, node.step + 1, &closed_list.back());
+					if (!in_closed_list(childB_node))
+					{
+						if (is_safe(childB_node))
+						{
+							refresh_opened(childB_node);
+						}
+					}
+				}
+				else if(node.b == 0 && node.B == 0)// A船在右側，B船在右側
+				{ 
 					if (i > m_num - node.m || j > c_num - node.c)
 					{
 						continue;
 					}
-					Node *child_node = new Node(node.m + i, node.c + j, 1,1,node.b_count+1,node.B_count, node.step + 1, &closed_list.back());
-					if (!in_closed_list(child_node))
+					//走A船
+					if(i+j<3)
 					{
-						if (is_safe(child_node))
+						Node *childA_node = new Node(node.m + i, node.c + j, 1,0,node.b_count+1,node.B_count, node.step + 1, &closed_list.back());
+						if (!in_closed_list(childA_node))
 						{
-							refresh_opened(child_node);
+							if (is_safe(childA_node))
+							{
+								refresh_opened(childA_node);
+							}
+						}
+					}
+					//走B船
+					Node *childB_node = new Node(node.m + i, node.c + j, 0,1,node.b_count,node.B_count+1, node.step + 1, &closed_list.back());
+					if (!in_closed_list(childB_node))
+					{
+						if (is_safe(childB_node))
+						{
+							refresh_opened(childB_node);
 						}
 					}
 				}
