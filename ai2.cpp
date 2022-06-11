@@ -206,7 +206,7 @@ void a_star_algorithm(){
 					}
 				}
 				// b船
-				Node* child_node = new Node(node.m-node.b*i, node.c-node.b*j, node.a, -node.b, node.step+1, node.cost+25, node.time+10, &closed_list.back());
+				Node* child_node = new Node(node.m-node.b*i, node.c-node.b*j, node.a, -node.b, node.step+1, node.cost+25, node.time+B_rate, &closed_list.back());
 				if(!in_closed_list(child_node)){
 					if(is_safe(child_node)){
 						refresh_opened(child_node);
