@@ -33,8 +33,8 @@ struct Node{
 	Node(int m_num, int c_num, int a_state, int b_state, int step_count, int cost_num, int time_num, Node* ptr): 
 	m{m_num}, c{c_num}, a{a_state}, b{b_state}, step{step_count}, cost{cost_num}, time{time_num}, parent{ptr} {
 		int score = mode ? step : cost;
-		//f_loss = score + ((m + c) / 2.0) * (mode ? 1:30);
-		f_loss = score; 
+		f_loss = score + ((m + c) / 2.0) * (mode ? 1:30);
+		//f_loss = score; 
 	}
 	Node():m{0}, c{0}, a{0}, b{0}, cost{0}, step{0}, time{0}, f_loss{0}, parent{nullptr} {};
 };
@@ -198,7 +198,7 @@ void a_star_algorithm(){
 				}
 				// a船
 				if(i+j<=A_MAX_CAPACITY){
-					Node* child_node = new Node(node.m-node.a*i, node.c-node.a*j, -node.a, node.b, node.step+1, node.cost+5, node.time+A_rate, &closed_list.back());
+					Node* child_node = new Node(node.m-node.a*i, node.c-node.a*j, -node.a, node.b, node.step+1, node.cost+3, node.time+A_rate, &closed_list.back());
 					if(!in_closed_list(child_node)){
 						if(is_safe(child_node)){
 							refresh_opened(child_node);
@@ -206,7 +206,7 @@ void a_star_algorithm(){
 					}
 				}
 				// b船
-				Node* child_node = new Node(node.m-node.b*i, node.c-node.b*j, node.a, -node.b, node.step+1, node.cost+25, node.time+B_rate, &closed_list.back());
+				Node* child_node = new Node(node.m-node.b*i, node.c-node.b*j, node.a, -node.b, node.step+1, node.cost+25, node.time+10, &closed_list.back());
 				if(!in_closed_list(child_node)){
 					if(is_safe(child_node)){
 						refresh_opened(child_node);
